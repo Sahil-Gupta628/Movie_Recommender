@@ -58,20 +58,3 @@ if st.button("Recommend"):
     with col5:
         st.text(names[4])
         st.image(posters[4])
-
-
-# import streamlit as st
-# import pickle
-# import pandas as pd
-
-# # Load the pickle file
-# with open('movie_dict.pkl', 'rb') as file:
-#     movies_dict = pickle.load(file)
-
-# movies = pd.DataFrame(movies_dict)
-
-# st.title('Movie Recommender System')
-
-# option = st.selectbox(
-#     "How would you like to be contacted?",
-#     movies['title'].values)
