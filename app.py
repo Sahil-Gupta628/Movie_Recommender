@@ -19,42 +19,64 @@ def recommend(movie):
 
     recommended_movies = []
     recommended_movies_posters = []
+    recommended_movies_overview = []
     for i in movies_list:
         movie_id = movies.iloc[i[0]].movie_id
-
-        recommended_movies.append(movies.iloc[i[0]].title)
         recommended_movies_posters.append(fetch_poster(movie_id))
-    return recommended_movies, recommended_movies_posters
+        recommended_movies.append(movies.iloc[i[0]].title)
+        recommended_movies_overview.append(movies.iloc[i[0]].tags)
+    return recommended_movies, recommended_movies_posters, recommended_movies_overview
 
 
-movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
+# Load data
+movies_dict = pickle.load(open(
+    r'C:/Users/SAHIL/OneDrive/Documents/Projects/Machine Learning/Movie Recommendation System/movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
 
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+similarity = pickle.load(open(
+    "C:/Users/SAHIL/OneDrive/Documents/Projects/Machine Learning/Movie Recommendation System/similarity.pkl", 'rb'))
 
-st.title('Movie Recommender System')
+# Streamlit UI
+st.title('🎬 Movie Recommender System 🍿')
+
+st.markdown("""
+<style>
+body {
+    background-color: #f0f2f6;
+}
+h1 {
+    color: #ff4b4b;
+    text-align: center;
+}
+.movie-title {
+    font-size: 21px;
+    font-weight: bold;
+    color: #F5F5F5;
+    margin-bottom: 5px;
+}
+.movie-overview {
+    font-size: 15px;
+    color: #E8E8E8;
+    text-align: justify;
+}
+</style>
+""", unsafe_allow_html=True)
 
 selected_movie_name = st.selectbox(
-    "How would you like to be contacted?",
+    "Select a movie you like:",
     movies['title'].values)
 
 if st.button("Recommend"):
-    names, posters = recommend(selected_movie_name)
+    names, posters, overviews = recommend(selected_movie_name)
 
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.text(names[0])
-        st.image(posters[0])
-    with col2:
-        st.text(names[1])
-        st.image(posters[1])
-
-    with col3:
-        st.text(names[2])
-        st.image(posters[2])
-    with col4:
-        st.text(names[3])
-        st.image(posters[3])
-    with col5:
-        st.text(names[4])
-        st.image(posters[4])
+    st.subheader("Recommended Movies:")
+    for name, poster, overview in zip(names, posters, overviews):
+        with st.container():
+            col1, col2 = st.columns([1, 3])
+            with col1:
+                st.image(poster, use_column_width=True)
+            with col2:
+                st.markdown(
+                    f'<div class="movie-title">{name}</div>', unsafe_allow_html=True)
+                st.markdown(
+                    f'<div class="movie-overview">{overview}</div>', unsafe_allow_html=True)
